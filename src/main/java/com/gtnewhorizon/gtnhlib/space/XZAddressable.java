@@ -4,5 +4,6 @@ package com.gtnewhorizon.gtnhlib.space;
 public interface XZAddressable {
 
     int getX();
+
     int getZ();
 }

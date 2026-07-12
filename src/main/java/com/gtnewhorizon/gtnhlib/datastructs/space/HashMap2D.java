@@ -12,9 +12,10 @@ import java.util.stream.StreamSupport;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.gtnewhorizon.gtnhlib.space.XZAddressable;
 import com.gtnewhorizon.gtnhlib.functional.Compute2D;
 import com.gtnewhorizon.gtnhlib.functional.Consumer2DWithValue;
+import com.gtnewhorizon.gtnhlib.space.XZAddressable;
+
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.AbstractObjectSet;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
@@ -80,8 +81,8 @@ public class HashMap2D<V> extends Long2ObjectOpenHashMap<V> {
     public interface FastEntrySet2D<V> extends ObjectSet<Entry2D<V>> {
 
         /**
-         * Returns a fast iterator over this entry set; the iterator might return always the same entry
-         * instance, suitably mutated.
+         * Returns a fast iterator over this entry set; the iterator might return always the same entry instance,
+         * suitably mutated.
          *
          * @return a fast iterator over this entry set; the iterator might return always the same
          *         {@link java.util.Map.Entry} instance, suitably mutated.
@@ -89,15 +90,15 @@ public class HashMap2D<V> extends Long2ObjectOpenHashMap<V> {
         ObjectIterator<Entry2D<V>> fastIterator();
 
         /**
-         * Iterates quickly over this entry set; the iteration might happen always on the same entry
-         * instance, suitably mutated.
+         * Iterates quickly over this entry set; the iteration might happen always on the same entry instance, suitably
+         * mutated.
          *
          * <p>
          *
          * This default implementation just delegates to {@link #forEach(Consumer)}.
          *
-         * @param consumer a consumer that will by applied to the entries of this set; the entries might be
-         *                 represented by the same entry instance, suitably mutated.
+         * @param consumer a consumer that will by applied to the entries of this set; the entries might be represented
+         *                 by the same entry instance, suitably mutated.
          * @since 8.1.0
          */
         default void fastForEach(final Consumer<? super Entry2D<V>> consumer) {
@@ -119,11 +120,11 @@ public class HashMap2D<V> extends Long2ObjectOpenHashMap<V> {
 
     public Stream<Entry2D<V>> fastEntryStream() {
         return StreamSupport.stream(
-            Spliterators.spliterator(
-                fastEntryIterable().iterator(),
-                size(),
-                Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT),
-            false);
+                Spliterators.spliterator(
+                        fastEntryIterable().iterator(),
+                        size(),
+                        Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT),
+                false);
     }
 
     private class FastEntrySet2DImpl extends AbstractObjectSet<Entry2D<V>> implements FastEntrySet2D<V> {
@@ -132,8 +133,7 @@ public class HashMap2D<V> extends Long2ObjectOpenHashMap<V> {
         public ObjectIterator<Entry2D<V>> fastIterator() {
             Entry2D<V> entry = new Entry2D<>();
 
-            var iter = HashMap2D.this.long2ObjectEntrySet()
-                .fastIterator();
+            var iter = HashMap2D.this.long2ObjectEntrySet().fastIterator();
 
             return new ObjectIterator<>() {
 
@@ -156,8 +156,7 @@ public class HashMap2D<V> extends Long2ObjectOpenHashMap<V> {
 
         @Override
         public @NotNull ObjectIterator<Entry2D<V>> iterator() {
-            var iter = HashMap2D.this.long2ObjectEntrySet()
-                .fastIterator();
+            var iter = HashMap2D.this.long2ObjectEntrySet().fastIterator();
 
             return new ObjectIterator<>() {
 

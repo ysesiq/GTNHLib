@@ -6,8 +6,7 @@ public class MutableXYZ implements XYZAddressable {
 
     public int x, y, z;
 
-    public MutableXYZ() {
-    }
+    public MutableXYZ() {}
 
     public MutableXYZ(int x, int y, int z) {
         this.x = x;

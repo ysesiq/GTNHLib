@@ -13,9 +13,10 @@ import java.util.stream.StreamSupport;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.gtnewhorizon.gtnhlib.space.XYZAddressable;
 import com.gtnewhorizon.gtnhlib.functional.Compute3D;
 import com.gtnewhorizon.gtnhlib.functional.Consumer3DWithValue;
+import com.gtnewhorizon.gtnhlib.space.XYZAddressable;
+
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.AbstractObjectSet;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
@@ -81,8 +82,8 @@ public class HashMap3D<V> extends Long2ObjectOpenHashMap<V> {
     public interface FastEntrySet3D<V> extends ObjectSet<Entry3D<V>> {
 
         /**
-         * Returns a fast iterator over this entry set; the iterator might return always the same entry
-         * instance, suitably mutated.
+         * Returns a fast iterator over this entry set; the iterator might return always the same entry instance,
+         * suitably mutated.
          *
          * @return a fast iterator over this entry set; the iterator might return always the same
          *         {@link java.util.Map.Entry} instance, suitably mutated.
@@ -90,15 +91,15 @@ public class HashMap3D<V> extends Long2ObjectOpenHashMap<V> {
         ObjectIterator<Entry3D<V>> fastIterator();
 
         /**
-         * Iterates quickly over this entry set; the iteration might happen always on the same entry
-         * instance, suitably mutated.
+         * Iterates quickly over this entry set; the iteration might happen always on the same entry instance, suitably
+         * mutated.
          *
          * <p>
          *
          * This default implementation just delegates to {@link #forEach(Consumer)}.
          *
-         * @param consumer a consumer that will by applied to the entries of this set; the entries might be
-         *                 represented by the same entry instance, suitably mutated.
+         * @param consumer a consumer that will by applied to the entries of this set; the entries might be represented
+         *                 by the same entry instance, suitably mutated.
          * @since 8.1.0
          */
         default void fastForEach(final Consumer<? super Entry3D<V>> consumer) {
@@ -120,11 +121,11 @@ public class HashMap3D<V> extends Long2ObjectOpenHashMap<V> {
 
     public Stream<Entry3D<V>> fastEntryStream() {
         return StreamSupport.stream(
-            Spliterators.spliterator(
-                fastEntryIterable().iterator(),
-                size(),
-                Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT),
-            false);
+                Spliterators.spliterator(
+                        fastEntryIterable().iterator(),
+                        size(),
+                        Spliterator.SIZED | Spliterator.NONNULL | Spliterator.DISTINCT),
+                false);
     }
 
     private class FastEntrySet3DImpl extends AbstractObjectSet<Entry3D<V>> implements FastEntrySet3D<V> {
@@ -133,8 +134,7 @@ public class HashMap3D<V> extends Long2ObjectOpenHashMap<V> {
         public ObjectIterator<Entry3D<V>> fastIterator() {
             Entry3D<V> entry = new Entry3D<>();
 
-            var iter = HashMap3D.this.long2ObjectEntrySet()
-                .fastIterator();
+            var iter = HashMap3D.this.long2ObjectEntrySet().fastIterator();
 
             return new ObjectIterator<>() {
 
@@ -157,8 +157,7 @@ public class HashMap3D<V> extends Long2ObjectOpenHashMap<V> {
 
         @Override
         public @NotNull ObjectIterator<Entry3D<V>> iterator() {
-            var iter = HashMap3D.this.long2ObjectEntrySet()
-                .fastIterator();
+            var iter = HashMap3D.this.long2ObjectEntrySet().fastIterator();
 
             return new ObjectIterator<>() {
 
