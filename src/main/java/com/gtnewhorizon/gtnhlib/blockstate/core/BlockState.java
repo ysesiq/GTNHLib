@@ -4,12 +4,13 @@ import java.util.Map;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.gtnewhorizon.gtnhlib.blockstate.registry.BlockPropertyRegistry;
 import com.gtnewhorizon.gtnhlib.geometry.TransformLike;
-
 import cpw.mods.fml.common.registry.GameRegistry;
 
 /// Represents the state of a block. Includes things like rotation, powered-ness, orientation, etc. Does not include
@@ -54,6 +55,12 @@ public interface BlockState extends AutoCloseable, Cloneable {
     /// Gets the 'original' block for this state. Note that any block-changing properties (such as the various 'lit'
     /// properties) may change the actual block that gets placed by this BlockState.
     Block getBlock();
+
+    /// Gets the block metadata for this state by passing the given value through each property with the
+    /// [BlockPropertyTrait#OnlyNeedsMeta] trait. Ignores non-meta properties entirely.
+    /// Ignores deferred values. Treats unvalidated and validated properties the same.
+    /// @param existing The existing meta, if needed. Can likely be set to 0.
+    int getBlockMeta(int existing);
 
     /// Returns the resolution state of the given property in this [BlockState], or null if the property is not present.
     /// Deferred properties are not found by this overload — use [#getPropertyState(String)] to include them.

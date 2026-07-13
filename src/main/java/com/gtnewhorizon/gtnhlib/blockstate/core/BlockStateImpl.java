@@ -30,7 +30,6 @@ import com.gtnewhorizon.gtnhlib.geometry.TransformLike;
 import com.gtnewhorizon.gtnhlib.geometry.VectorTransform;
 import com.gtnewhorizon.gtnhlib.hash.Fnv1a32;
 import com.gtnewhorizon.gtnhlib.util.IObjectPool;
-
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -187,9 +186,24 @@ public class BlockStateImpl implements BlockState {
     }
 
     @Override
-    public void forEachValue(BlockPropertyValueConsumer consumer) {
+    public int getBlockMeta(int existing) {
         for (int i = 0; i < entries.size(); i++) {
             PropertyEntry entry = entries.get(i);
+
+            if (entry.name == null) continue;
+            if (entry.property == null) continue;
+            if (!entry.property.hasTrait(BlockPropertyTrait.OnlyNeedsMeta)) continue;
+
+            existing = ((MetaBlockProperty) entry.property).getMeta(entry.value, existing);
+        }
+
+        return existing;
+    }
+
+    @Override
+    public void forEachValue(BlockPropertyValueConsumer consumer) {
+        for (int i = 0; i < entries.size(); i++) {
+            BlockStateImpl.PropertyEntry entry = entries.get(i);
 
             if (entry.name == null) continue;
 
