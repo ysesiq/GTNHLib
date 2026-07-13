@@ -50,7 +50,8 @@ public class BlockStateImpl implements BlockState {
 
     private final List<@NotNull PropertyEntry> entries = new ArrayList<>(8);
 
-    /// A property value is stored as a pooled entry in what is essentially a multi-keyed map. This is used to simplify state
+    /// A property value is stored as a pooled entry in what is essentially a multi-keyed map. This is used to simplify
+    /// state
     /// tracking, since a property value can transition between deferred, unvalidated, or normal states arbitrarily.
     private static class PropertyEntry {
 
@@ -118,17 +119,16 @@ public class BlockStateImpl implements BlockState {
 
         @Override
         public String toString() {
-            return "PropertyEntry{"
-                + "name='"
-                + name
-                + '\''
-                + ", property="
-                + property
-                + ", value="
-                + value
-                + ", validated="
-                + validated
-                + '}';
+            return "PropertyEntry{" + "name='"
+                    + name
+                    + '\''
+                    + ", property="
+                    + property
+                    + ", value="
+                    + value
+                    + ", validated="
+                    + validated
+                    + '}';
         }
     }
 
@@ -233,7 +233,7 @@ public class BlockStateImpl implements BlockState {
         } else {
             // Use an anonymous class so that we can use a mutable index field
             source.forEachValue(new BlockPropertyValueConsumer() {
-                
+
                 private int index;
 
                 @Override
