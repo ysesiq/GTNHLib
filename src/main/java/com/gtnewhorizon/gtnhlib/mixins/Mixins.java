@@ -62,7 +62,8 @@ public enum Mixins implements IMixins {
     WORLD_DELETION_EVENT(Side.CLIENT, "MixinGuiSelectWorld"),
     WORLD_LOAD_WARNING(new MixinBuilder("Accessors for the world conversion warning screen system")
             .addCommonMixins("AccessorGuiNotification", "AccessorStartupQuery").setPhase(Phase.EARLY)),
-    WORLD_OBSERVER(new MixinBuilder("Inject world observer field").addCommonMixins("MixinWorld_Observer").setPhase(Phase.EARLY))
+    WORLD_OBSERVER(new MixinBuilder("Inject world observer field").addCommonMixins("MixinWorld_Observer")
+            .setPhase(Phase.EARLY))
     //
     ;
 

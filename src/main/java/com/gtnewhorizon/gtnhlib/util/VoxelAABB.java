@@ -59,10 +59,8 @@ public class VoxelAABB {
     public VoxelAABB union(Vector3i v) {
         Vector3i min = min(), max = max();
 
-        a.set(v)
-            .min(min);
-        b.set(v)
-            .max(max);
+        a.set(v).min(min);
+        b.set(v).max(max);
 
         return this;
     }
@@ -70,19 +68,15 @@ public class VoxelAABB {
     public VoxelAABB union(VoxelAABB other) {
         Vector3i min = min(), max = max();
 
-        a.set(min)
-            .min(other.min());
-        b.set(max)
-            .max(other.max());
+        a.set(min).min(other.min());
+        b.set(max).max(other.max());
 
         return this;
     }
 
     public VoxelAABB moveOrigin(Vector3i newOrigin) {
-        b.sub(origin)
-            .add(newOrigin);
-        a.sub(origin)
-            .add(newOrigin);
+        b.sub(origin).add(newOrigin);
+        a.sub(origin).add(newOrigin);
         origin.set(newOrigin);
 
         return this;
@@ -138,10 +132,10 @@ public class VoxelAABB {
         Vector3i size = size();
 
         return String.format(
-            "dX=%,d dY=%,d dZ=%,d V=%,d",
-            Math.abs(size.x),
-            Math.abs(size.y),
-            Math.abs(size.z),
-            size.x * size.y * size.z);
+                "dX=%,d dY=%,d dZ=%,d V=%,d",
+                Math.abs(size.x),
+                Math.abs(size.y),
+                Math.abs(size.z),
+                size.x * size.y * size.z);
     }
 }

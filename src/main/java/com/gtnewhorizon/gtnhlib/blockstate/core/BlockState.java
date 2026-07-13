@@ -4,13 +4,12 @@ import java.util.Map;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.gtnewhorizon.gtnhlib.blockstate.registry.BlockPropertyRegistry;
 import com.gtnewhorizon.gtnhlib.geometry.TransformLike;
+
 import cpw.mods.fml.common.registry.GameRegistry;
 
 /// Represents the state of a block. Includes things like rotation, powered-ness, orientation, etc. Does not include

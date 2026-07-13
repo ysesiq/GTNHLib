@@ -18,6 +18,7 @@ import com.gtnewhorizon.gtnhlib.functional.Compute3D;
 import com.gtnewhorizon.gtnhlib.functional.Compute3DWithValue;
 import com.gtnewhorizon.gtnhlib.functional.Consumer3DWithValue;
 import com.gtnewhorizon.gtnhlib.space.XYZAddressable;
+
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.AbstractObjectSet;
@@ -88,9 +89,7 @@ public class HashMap3D<V> extends Long2ObjectOpenHashMap<V> {
     }
 
     public V computeIfPresent(int posX, int posY, int posZ, @NotNull Compute3DWithValue<V> remappingFunction) {
-        return super.computeIfPresent(
-                pack(posX, posY, posZ),
-                (k, v) -> remappingFunction.apply(posX, posY, posZ, v));
+        return super.computeIfPresent(pack(posX, posY, posZ), (k, v) -> remappingFunction.apply(posX, posY, posZ, v));
     }
 
     public V computeIfPresent(XYZAddressable xyz, @NotNull Compute3DWithValue<V> remappingFunction) {
