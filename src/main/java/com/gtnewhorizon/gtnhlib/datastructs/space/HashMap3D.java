@@ -7,6 +7,7 @@ import static com.gtnewhorizon.gtnhlib.util.CoordinatePacker.unpackZ;
 
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -14,9 +15,10 @@ import java.util.stream.StreamSupport;
 import org.jetbrains.annotations.NotNull;
 
 import com.gtnewhorizon.gtnhlib.functional.Compute3D;
+import com.gtnewhorizon.gtnhlib.functional.Compute3DWithValue;
 import com.gtnewhorizon.gtnhlib.functional.Consumer3DWithValue;
 import com.gtnewhorizon.gtnhlib.space.XYZAddressable;
-
+import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.AbstractObjectSet;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
@@ -73,9 +75,99 @@ public class HashMap3D<V> extends Long2ObjectOpenHashMap<V> {
         return v;
     }
 
+    public V computeIfAbsent(XYZAddressable xyz, @NotNull Compute3D<V> mappingFunction) {
+        return computeIfAbsent(xyz.getX(), xyz.getY(), xyz.getZ(), mappingFunction);
+    }
+
+    public V compute(int posX, int posY, int posZ, @NotNull Compute3DWithValue<V> remappingFunction) {
+        return super.compute(pack(posX, posY, posZ), (k, v) -> remappingFunction.apply(posX, posY, posZ, v));
+    }
+
+    public V compute(XYZAddressable xyz, @NotNull Compute3DWithValue<V> remappingFunction) {
+        return compute(xyz.getX(), xyz.getY(), xyz.getZ(), remappingFunction);
+    }
+
+    public V computeIfPresent(int posX, int posY, int posZ, @NotNull Compute3DWithValue<V> remappingFunction) {
+        return super.computeIfPresent(
+                pack(posX, posY, posZ),
+                (k, v) -> remappingFunction.apply(posX, posY, posZ, v));
+    }
+
+    public V computeIfPresent(XYZAddressable xyz, @NotNull Compute3DWithValue<V> remappingFunction) {
+        return computeIfPresent(xyz.getX(), xyz.getY(), xyz.getZ(), remappingFunction);
+    }
+
+    public V getOrDefault(int posX, int posY, int posZ, V defaultValue) {
+        return super.getOrDefault(pack(posX, posY, posZ), defaultValue);
+    }
+
+    public V getOrDefault(XYZAddressable xyz, V defaultValue) {
+        return getOrDefault(xyz.getX(), xyz.getY(), xyz.getZ(), defaultValue);
+    }
+
+    /// Unlike [java.util.Map#putIfAbsent], a key already mapped to `null` is treated as present and will not be
+    /// overwritten.
+    public V putIfAbsent(int posX, int posY, int posZ, V v) {
+        return super.putIfAbsent(pack(posX, posY, posZ), v);
+    }
+
+    public V putIfAbsent(XYZAddressable xyz, V v) {
+        return putIfAbsent(xyz.getX(), xyz.getY(), xyz.getZ(), v);
+    }
+
+    public boolean remove(int posX, int posY, int posZ, V value) {
+        return super.remove(pack(posX, posY, posZ), value);
+    }
+
+    public boolean remove(XYZAddressable xyz, V value) {
+        return remove(xyz.getX(), xyz.getY(), xyz.getZ(), value);
+    }
+
+    public V replace(int posX, int posY, int posZ, V value) {
+        return super.replace(pack(posX, posY, posZ), value);
+    }
+
+    public V replace(XYZAddressable xyz, V value) {
+        return replace(xyz.getX(), xyz.getY(), xyz.getZ(), value);
+    }
+
+    public boolean replace(int posX, int posY, int posZ, V oldValue, V newValue) {
+        return super.replace(pack(posX, posY, posZ), oldValue, newValue);
+    }
+
+    public boolean replace(XYZAddressable xyz, V oldValue, V newValue) {
+        return replace(xyz.getX(), xyz.getY(), xyz.getZ(), oldValue, newValue);
+    }
+
+    public V merge(int posX, int posY, int posZ, @NotNull V value,
+            @NotNull BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+        return super.merge(pack(posX, posY, posZ), value, remappingFunction);
+    }
+
+    public V merge(XYZAddressable xyz, @NotNull V value,
+            @NotNull BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+        return merge(xyz.getX(), xyz.getY(), xyz.getZ(), value, remappingFunction);
+    }
+
     public void forEach(Consumer3DWithValue<V> consumer) {
         for (var e : this.fastEntryIterable()) {
             consumer.accept(e.getX(), e.getY(), e.getZ(), e.getValue());
+        }
+    }
+
+    public void replaceAll(@NotNull Compute3DWithValue<V> function) {
+        var iter = Long2ObjectMaps.fastIterator(this);
+
+        while (iter.hasNext()) {
+            var e = iter.next();
+
+            long key = e.getLongKey();
+            V value = e.getValue();
+            V newValue = function.apply(unpackX(key), unpackY(key), unpackZ(key), value);
+
+            if (newValue != value) {
+                e.setValue(newValue);
+            }
         }
     }
 

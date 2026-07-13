@@ -6,6 +6,7 @@ import static com.gtnewhorizon.gtnhlib.util.CoordinatePacker2D.unpackChunkZ;
 
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -13,9 +14,10 @@ import java.util.stream.StreamSupport;
 import org.jetbrains.annotations.NotNull;
 
 import com.gtnewhorizon.gtnhlib.functional.Compute2D;
+import com.gtnewhorizon.gtnhlib.functional.Compute2DWithValue;
 import com.gtnewhorizon.gtnhlib.functional.Consumer2DWithValue;
 import com.gtnewhorizon.gtnhlib.space.XZAddressable;
-
+import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.AbstractObjectSet;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
@@ -72,9 +74,96 @@ public class HashMap2D<V> extends Long2ObjectOpenHashMap<V> {
         return v;
     }
 
+    public V computeIfAbsent(XZAddressable xyz, @NotNull Compute2D<V> mappingFunction) {
+        return computeIfAbsent(xyz.getX(), xyz.getZ(), mappingFunction);
+    }
+
+    public V compute(int posX, int posZ, @NotNull Compute2DWithValue<V> remappingFunction) {
+        return super.compute(packChunk(posX, posZ), (k, v) -> remappingFunction.apply(posX, posZ, v));
+    }
+
+    public V compute(XZAddressable xyz, @NotNull Compute2DWithValue<V> remappingFunction) {
+        return compute(xyz.getX(), xyz.getZ(), remappingFunction);
+    }
+
+    public V computeIfPresent(int posX, int posZ, @NotNull Compute2DWithValue<V> remappingFunction) {
+        return super.computeIfPresent(packChunk(posX, posZ), (k, v) -> remappingFunction.apply(posX, posZ, v));
+    }
+
+    public V computeIfPresent(XZAddressable xyz, @NotNull Compute2DWithValue<V> remappingFunction) {
+        return computeIfPresent(xyz.getX(), xyz.getZ(), remappingFunction);
+    }
+
+    public V getOrDefault(int posX, int posZ, V defaultValue) {
+        return super.getOrDefault(packChunk(posX, posZ), defaultValue);
+    }
+
+    public V getOrDefault(XZAddressable xyz, V defaultValue) {
+        return getOrDefault(xyz.getX(), xyz.getZ(), defaultValue);
+    }
+
+    /// Unlike [java.util.Map#putIfAbsent], a key already mapped to `null` is treated as present and will not be
+    /// overwritten.
+    public V putIfAbsent(int posX, int posZ, V v) {
+        return super.putIfAbsent(packChunk(posX, posZ), v);
+    }
+
+    public V putIfAbsent(XZAddressable xyz, V v) {
+        return putIfAbsent(xyz.getX(), xyz.getZ(), v);
+    }
+
+    public boolean remove(int posX, int posZ, V value) {
+        return super.remove(packChunk(posX, posZ), value);
+    }
+
+    public boolean remove(XZAddressable xyz, V value) {
+        return remove(xyz.getX(), xyz.getZ(), value);
+    }
+
+    public V replace(int posX, int posZ, V value) {
+        return super.replace(packChunk(posX, posZ), value);
+    }
+
+    public V replace(XZAddressable xyz, V value) {
+        return replace(xyz.getX(), xyz.getZ(), value);
+    }
+
+    public boolean replace(int posX, int posZ, V oldValue, V newValue) {
+        return super.replace(packChunk(posX, posZ), oldValue, newValue);
+    }
+
+    public boolean replace(XZAddressable xyz, V oldValue, V newValue) {
+        return replace(xyz.getX(), xyz.getZ(), oldValue, newValue);
+    }
+
+    public V merge(int posX, int posZ, @NotNull V value,
+            @NotNull BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+        return super.merge(packChunk(posX, posZ), value, remappingFunction);
+    }
+
+    public V merge(XZAddressable xyz, @NotNull V value,
+            @NotNull BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+        return merge(xyz.getX(), xyz.getZ(), value, remappingFunction);
+    }
+
     public void forEach(Consumer2DWithValue<V> consumer) {
         for (var e : this.fastEntryIterable()) {
             consumer.accept(e.getX(), e.getZ(), e.getValue());
+        }
+    }
+
+    public void replaceAll(@NotNull Compute2DWithValue<V> function) {
+        var iter = Long2ObjectMaps.fastIterator(this);
+
+        while (iter.hasNext()) {
+            var e = iter.next();
+
+            V value = e.getValue();
+            V newValue = function.apply(unpackChunkX(e.getLongKey()), unpackChunkZ(e.getLongKey()), value);
+
+            if (newValue != value) {
+                e.setValue(newValue);
+            }
         }
     }
 
