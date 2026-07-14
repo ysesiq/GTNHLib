@@ -253,7 +253,8 @@ public class JSONModel implements UnbakedModel {
         name = name.replaceFirst("^minecraft:", "");
         var icon = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(name);
         if ("missingno".equals(icon.getIconName())) {
-            icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationItemsTexture)).getAtlasSprite(name);
+            icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager()
+                    .getTexture(TextureMap.locationItemsTexture)).getAtlasSprite(name);
         }
         final float minU = icon.getMinU();
         final float minV = icon.getMinV();
