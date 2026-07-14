@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -250,7 +251,10 @@ public class JSONModel implements UnbakedModel {
     // TODO Doesn't account for UV rotation settings atm
     protected void bakeSprite(ModelQuadViewMutable quad, String name) {
         name = name.replaceFirst("^minecraft:", "");
-        final var icon = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(name);
+        var icon = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(name);
+        if ("missingno".equals(icon.getIconName())) {
+            icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationItemsTexture)).getAtlasSprite(name);
+        }
         final float minU = icon.getMinU();
         final float minV = icon.getMinV();
         final float dU = icon.getMaxU() - minU;
